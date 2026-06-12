@@ -57,7 +57,7 @@ What you see and edit in Neovim:
 
 ```lua
 {
-  "tim/not-html.nvim",
+  "tymnim/not-html.vim",
   config = function()
     require("not_html").setup()
   end,
@@ -67,7 +67,7 @@ What you see and edit in Neovim:
 ### [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug 'tim/not-html.nvim'
+Plug 'tymnim/not-html.vim'
 ```
 
 Then in your `init.lua`:
@@ -86,7 +86,7 @@ lua require("not_html").setup()
 
 ```lua
 use {
-  "tim/not-html.nvim",
+  "tymnim/not-html.vim",
   config = function()
     require("not_html").setup()
   end,
