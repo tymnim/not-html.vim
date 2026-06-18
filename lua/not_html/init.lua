@@ -45,6 +45,7 @@ function M.setup(opts)
       vim.bo[buf].swapfile = true
 
       if vim.fn.filereadable(file) == 0 then
+        vim.b[buf].not_html = true
         vim.bo[buf].filetype = "nothtml"
         vim.bo[buf].modified = false
         return
@@ -54,6 +55,7 @@ function M.setup(opts)
 
       if not M.config.enabled or html == "" then
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(html, "\n"))
+        vim.b[buf].not_html = true
         vim.bo[buf].modified = false
         return
       end
@@ -71,6 +73,17 @@ function M.setup(opts)
       end
 
       vim.bo[buf].modified = false
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufEnter", {
+    group = group,
+    pattern = { "*.html", "*.htm" },
+    callback = function(args)
+      local buf = args.buf
+      if vim.b[buf].not_html and vim.bo[buf].filetype ~= "nothtml" then
+        vim.bo[buf].filetype = "nothtml"
+      end
     end,
   })
 
@@ -110,6 +123,7 @@ function M.setup(opts)
     local result, err = compile(table.concat(lines, "\n"))
     if result then
       vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(result, "\n"))
+      vim.b[buf].not_html = nil
       vim.bo[buf].filetype = "html"
     else
       vim.notify("not_html: " .. (err or "unknown error"), vim.log.levels.ERROR)
@@ -121,6 +135,7 @@ function M.setup(opts)
     local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
     local result = decompile(table.concat(lines, "\n"))
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(result, "\n"))
+    vim.b[buf].not_html = true
     vim.bo[buf].filetype = "nothtml"
   end, {})
 end
